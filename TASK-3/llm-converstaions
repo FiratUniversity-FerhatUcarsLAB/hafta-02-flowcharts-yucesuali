@@ -1,0 +1,425 @@
+“Hastane randevu sistemi i¸cin algoritma: kimlik do˘grulama, poliklinik
+
+se¸cimi, doktor listesi g¨or¨unt¨uleme, uygun saatleri g¨osterme, randevu
+
+onaylama ve SMS g¨onderme. Pseudocode yaz.” 
+
+Harika. Bir hastane randevu sistemi için gerekli adımları içeren pseudocode algoritmasını, istenen formatta (TÜRKÇE anahtar kelimeler ve akış kontrol yapıları ile) adım adım oluşturalım.
+
+Kod snippet'i
+BASLA: HASTANE_RANDEVU_SISTEMI_ALGORITMASI
+
+// -----------------------------------------------------
+// I. KULLANICI KIMLIK DOGRULAMA
+// -----------------------------------------------------
+
+BASLA: KIMLIK_DOGRULAMA
+    DONGU: Dogrulama_Basarili_Olana_Kadar
+        TC_Kimlik_No = KULLANICIDAN_AL("TC Kimlik Numarası:")
+        Dogum_Tarihi = KULLANICIDAN_AL("Doğum Tarihi:")
+        
+        // KONTROL NOKTASI 1: Kimlik Bilgileri Kontrolü (Merkezi Sistem Simülasyonu)
+        EGER KIMLIK_BILGILERI_KONTROL_ET(TC_Kimlik_No, Dogum_Tarihi) ISE
+            Kullanici_ID = TC_Kimlik_No
+            EKRANA_YAZ("Kimlik doğrulama başarılı.")
+            DONGU_KIR
+        ELSE
+            HATA_SAYACI = HATA_SAYACI + 1
+            EKRANA_YAZ("Hatalı bilgi. Lütfen tekrar deneyin.")
+            EGER HATA_SAYACI >= 3 ISE
+                EKRANA_YAZ("Çok sayıda başarısız deneme. Sistemden çıkılıyor.")
+                GIT: SISTEM_KAPAT
+            BITIR
+        BITIR
+    BITIR: DONGU
+BITIR: KIMLIK_DOGRULAMA
+
+// -----------------------------------------------------
+// II. RANDEVU PARAMETRE SECIMI
+// -----------------------------------------------------
+
+BASLA: POLIKLINIK_SECIMI
+    Poliklinik_Listesi = VERITABANINDAN_AL("Aktif Poliklinikler")
+    EKRANA_GOSTER(Poliklinik_Listesi)
+    
+    Secilen_Poliklinik = KULLANICIDAN_SEC("Lütfen bir poliklinik seçiniz:")
+    
+    // KONTROL NOKTASI 2: Poliklinik Geçerliliği
+    EGER Secilen_Poliklinik Poliklinik_Listesi ICINDE_YOK_ISE
+        EKRANA_YAZ("Geçersiz poliklinik seçimi.")
+        GIT: POLIKLINIK_SECIMI
+    BITIR
+BITIR: POLIKLINIK_SECIMI
+
+BASLA: DOKTOR_LISTELEME
+    Doktor_Listesi = VERITABANINDAN_AL("Doktorlar", Secilen_Poliklinik)
+    EKRANA_GOSTER(Doktor_Listesi)
+    
+    Secilen_Doktor = KULLANICIDAN_SEC("Randevu almak istediğiniz doktoru seçiniz (Veya herhangi biri için '0'):")
+    
+    // KONTROL NOKTASI 3: Doktor Geçerliliği
+    EGER Secilen_Doktor Doktor_Listesi ICINDE_YOK_ISE VE Secilen_Doktor != "0" ISE
+        EKRANA_YAZ("Geçersiz doktor seçimi.")
+        GIT: DOKTOR_LISTELEME
+    BITIR
+BITIR: DOKTOR_LISTELEME
+
+// -----------------------------------------------------
+// III. UYGUN SAATLERI GOSTERME
+// -----------------------------------------------------
+
+BASLA: SAAT_GOSTERME
+    DONGU: Randevu_Onaylanana_Kadar
+        Uygun_Saatler = UYGUN_RANDEVU_SAATLERINI_BUL(Secilen_Poliklinik, Secilen_Doktor)
+        
+        // KONTROL NOKTASI 4: Uygun Saat Var mı?
+        EGER Uygun_Saatler BOS_ISE
+            EKRANA_YAZ("Üzgünüz, bu kriterlere uygun boş randevu bulunmamaktadır.")
+            GIT: DOKTOR_LISTELEME // Veya Poliklinik Seçimine dön
+        ELSE
+            EKRANA_GOSTER("Uygun Randevu Saatleri:")
+            EKRANA_GOSTER(Uygun_Saatler)
+            Secilen_Saat = KULLANICIDAN_SEC("Lütfen bir randevu saati seçiniz:")
+            
+            // KONTROL NOKTASI 5: Seçilen Saatin Geçerliliği ve Çakışma Kontrolü
+            EGER Secilen_Saat Uygun_Saatler ICINDE_ISE
+                DONGU_KIR
+            ELSE
+                EKRANA_YAZ("Geçersiz saat seçimi. Lütfen listeden bir saat seçin.")
+            BITIR
+        BITIR
+    BITIR: DONGU
+BITIR: SAAT_GOSTERME
+
+// -----------------------------------------------------
+// IV. RANDEVU ONAYLAMA VE BILGILENDIRME
+// -----------------------------------------------------
+
+BASLA: RANDEVU_ONAYLAMA
+    Onay_Metni = BILGILERI_TOPLA(Kullanici_ID, Secilen_Poliklinik, Secilen_Doktor, Secilen_Saat)
+    EKRANA_GOSTER("Randevu Onay Bilgileri: " + Onay_Metni)
+    
+    Kullanici_Onayi = KULLANICIDAN_AL("Randevuyu onaylıyor musunuz? (E/H)")
+    
+    EGER Kullanici_Onayi == "E" ISE
+        Randevu_ID = VERITABANINA_KAYDET(Onay_Metni)
+        EKRANA_YAZ("Randevunuz başarıyla oluşturuldu. Randevu No: " + Randevu_ID)
+        
+        // KONTROL NOKTASI 6: SMS Gönderimi
+        Kullanici_Tel_No = VERITABANINDAN_AL("Kullanıcı Telefonu", Kullanici_ID)
+        SMS_ICERIGI = "Randevu No: " + Randevu_ID + ". Hastane: " + Secilen_Poliklinik + " Doktor: " + Secilen_Doktor + " Tarih/Saat: " + Secilen_Saat
+        SMS_GONDER(Kullanici_Tel_No, SMS_ICERIGI)
+        
+        EKRANA_YAZ("Randevu detayları SMS ile gönderilmiştir.")
+    ELSE
+        EKRANA_YAZ("Randevu onaylanmadı. İşlem iptal edildi.")
+        GIT: POLIKLINIK_SECIMI // Veya Sistem Kapat
+    BITIR
+BITIR: RANDEVU_ONAYLAMA
+
+BASLA: SISTEM_KAPAT
+    EKRANA_YAZ("Sistemden çıkış yapılıyor. İyi günler dileriz.")
+BITIR: SISTEM_KAPAT
+
+GIT: SISTEM_KAPAT
+
+BITIR: HASTANE_RANDEVU_SISTEMI_ALGORITMASI
+“Tahlil sonucu g¨or¨unt¨uleme sistemi: kimlik do˘grulama, tahlil varlı˘gı
+
+kontrol¨u, sonu¸c hazır mı kontrol¨u, g¨or¨unt¨uleme veya bekleme mesajı, PDF
+
+indirme. Pseudocode yaz.” 
+
+Harika. Hastane randevu sistemine benzer şekilde, tahlil sonuçlarını görüntüleme sistemi için gerekli adımları içeren pseudocode algoritmasını oluşturalım.
+
+Kod snippet'i
+BASLA: TAHLIL_SONUCU_GORUNTULEME_SISTEMI
+
+// -----------------------------------------------------
+// I. KULLANICI KIMLIK DOGRULAMA
+// -----------------------------------------------------
+
+BASLA: KIMLIK_DOGRULAMA
+    DONGU: Dogrulama_Basarili_Olana_Kadar
+        TC_Kimlik_No = KULLANICIDAN_AL("TC Kimlik Numarası:")
+        Dogum_Tarihi = KULLANICIDAN_AL("Doğum Tarihi:")
+        
+        // KONTROL NOKTASI 1: Kimlik Bilgileri Kontrolü
+        EGER KIMLIK_BILGILERI_KONTROL_ET(TC_Kimlik_No, Dogum_Tarihi) ISE
+            Kullanici_ID = TC_Kimlik_No
+            EKRANA_YAZ("Kimlik doğrulama başarılı.")
+            DONGU_KIR
+        ELSE
+            HATA_SAYACI = HATA_SAYACI + 1
+            EKRANA_YAZ("Hatalı bilgi. Lütfen tekrar deneyin.")
+            EGER HATA_SAYACI >= 3 ISE
+                EKRANA_YAZ("Çok sayıda başarısız deneme. Sistemden çıkılıyor.")
+                GIT: SISTEM_KAPAT
+            BITIR
+        BITIR
+    BITIR: DONGULAMA
+BITIR: KIMLIK_DOGRULAMA
+
+// -----------------------------------------------------
+// II. TAHLIL VARLIGI VE SECIMI
+// -----------------------------------------------------
+
+BASLA: TAHLIL_LISTESI_KONTROLU
+    Tahlil_Listesi = VERITABANINDAN_AL("Kullanıcıya Ait Tahliller", Kullanici_ID)
+    
+    // KONTROL NOKTASI 2: Tahlil Varlığı
+    EGER Tahlil_Listesi BOS_ISE
+        EKRANA_YAZ("Sistemde adınıza kayıtlı sonuçlanmayı bekleyen veya sonuçlanmış tahlil bulunmamaktadır.")
+        GIT: SISTEM_KAPAT
+    ELSE
+        EKRANA_GOSTER("Tahlil Listesi:")
+        EKRANA_GOSTER(Tahlil_Listesi)
+        Secilen_Tahlil_ID = KULLANICIDAN_SEC("Görüntülemek istediğiniz tahlili seçiniz:")
+    BITIR
+BITIR: TAHLIL_LISTESI_KONTROLU
+
+// -----------------------------------------------------
+// III. SONUC HAZIRLIK KONTROLU
+// -----------------------------------------------------
+
+BASLA: SONUC_HAZIRLIK_KONTROLU
+    Sonuc_Durumu = VERITABANINDAN_AL("Tahlil Durumu", Secilen_Tahlil_ID)
+    
+    // KONTROL NOKTASI 3: Sonuc Hazır mı?
+    EGER Sonuc_Durumu == "HAZIR" ISE
+        EKRANA_YAZ("Tahlil sonuçlarınız görüntülenmeye hazırdır.")
+        GIT: SONUC_GORUNTULEME
+        
+    ELSE_EGER Sonuc_Durumu == "ISLEMDE" ISE
+        EKRANA_YAZ("Tahlil sonuçlarınız hala laboratuvar ortamında incelenmektedir. Lütfen daha sonra tekrar deneyin.")
+        GIT: SISTEM_KAPAT
+        
+    ELSE_EGER Sonuc_Durumu == "ORNEK_HATALI" ISE
+        EKRANA_YAZ("Tahlil örneğinizde sorun tespit edilmiştir. Lütfen hastane ile iletişime geçiniz.")
+        GIT: SISTEM_KAPAT
+        
+    ELSE
+        // Beklenmedik bir durum için
+        EKRANA_YAZ("Tahlil durumu bilgisine ulaşılamadı. Destek hattını arayınız.")
+        GIT: SISTEM_KAPAT
+    BITIR
+BITIR: SONUC_HAZIRLIK_KONTROLU
+
+// -----------------------------------------------------
+// IV. SONUC GORUNTULEME VE PDF INDIRME
+// -----------------------------------------------------
+
+BASLA: SONUC_GORUNTULEME
+    Tahlil_Icerigi = VERITABANINDAN_AL("Tahlil Sonuçları Detay", Secilen_Tahlil_ID)
+    EKRANA_GOSTER("--- TAHLIL SONUÇ DETAYLARI ---")
+    EKRANA_GOSTER(Tahlil_Icerigi)
+    EKRANA_GOSTER("------------------------------")
+    
+    PDF_Secimi = KULLANICIDAN_AL("Sonucu PDF olarak indirmek ister misiniz? (E/H)")
+    
+    EGER PDF_Secimi == "E" ISE
+        // KONTROL NOKTASI 4: PDF Oluşturma ve İndirme İşlemi
+        PDF_DOSYASI = PDF_OLUSTUR(Tahlil_Icerigi)
+        INDIRME_LINKI_YARAT(PDF_DOSYASI)
+        EKRANA_YAZ("PDF başarıyla oluşturuldu ve indirme bağlantısı sağlandı.")
+    ELSE
+        EKRANA_YAZ("PDF indirme işlemi atlandı.")
+    BITIR
+BITIR: SONUC_GORUNTULEME
+
+// -----------------------------------------------------
+// V. SISTEM KAPANISI
+// -----------------------------------------------------
+
+BASLA: SISTEM_KAPAT
+    EKRANA_YAZ("İşlem tamamlandı. Sistemden çıkış yapılıyor.")
+BITIR: SISTEM_KAPAT
+
+GIT: SISTEM_KAPAT
+
+BITIR: TAHLIL_SONUCU_GORUNTULEME_SISTEMI
+Ana men¨u ile iki mod¨ul¨u birle¸stirin
+
+Harika. Daha önce yazdığımız iki hastane sistemini (Randevu Sistemi ve Tahlil Sonucu Görüntüleme Sistemi), kullanıcıya seçim yapma imkanı tanıyan bir Ana Menü ile birleştiren ana bir pseudocode algoritması oluşturalım.
+
+Bu algoritma, kimlik doğrulamasını bir kez yapar ve ardından kullanıcıya hangi modüle devam etmek istediğini sorar.
+
+Ana Menü ile Modülleri Birleştiren Pseudocode
+Kod snippet'i
+BASLA: HASTANE_MERKEZ_SISTEMI_ALGORITMASI
+
+// -----------------------------------------------------
+// I. MERKEZI KIMLIK DOGRULAMA
+// -----------------------------------------------------
+
+BASLA: MERKEZI_KIMLIK_DOGRULAMA
+    DONGU: Dogrulama_Basarili_Olana_Kadar
+        TC_Kimlik_No = KULLANICIDAN_AL("TC Kimlik Numarası:")
+        Dogum_Tarihi = KULLANICIDAN_AL("Doğum Tarihi:")
+        
+        // KONTROL NOKTASI 1: Kimlik Bilgileri Kontrolü
+        EGER KIMLIK_BILGILERI_KONTROL_ET(TC_Kimlik_No, Dogum_Tarihi) ISE
+            Kullanici_ID = TC_Kimlik_No
+            EKRANA_YAZ("Kimlik doğrulama başarılı.")
+            DONGU_KIR
+        ELSE
+            HATA_SAYACI = HATA_SAYACI + 1
+            EKRANA_YAZ("Hatalı bilgi. Lütfen tekrar deneyin.")
+            EGER HATA_SAYACI >= 3 ISE
+                EKRANA_YAZ("Çok sayıda başarısız deneme. Sistemden çıkılıyor.")
+                GIT: SISTEM_KAPAT
+            BITIR
+        BITIR
+    BITIR: DONGU
+BITIR: MERKEZI_KIMLIK_DOGRULAMA
+
+// -----------------------------------------------------
+// II. ANA MENU VE MODUL SECIMI
+// -----------------------------------------------------
+
+BASLA: ANA_MENU_SECIM
+    DONGU: Kullanici_Cikis_Yapana_Kadar
+        EKRANA_GOSTER("\n--- HASTANE ANA MENÜ ---")
+        EKRANA_GOSTER("1: Randevu Alma Sistemi")
+        EKRANA_GOSTER("2: Tahlil Sonucu Görüntüleme")
+        EKRANA_GOSTER("3: Çıkış")
+        Menu_Secimi = KULLANICIDAN_AL("Lütfen yapmak istediğiniz işlemi seçiniz:")
+        
+        // KONTROL NOKTASI 2: Menü Seçimi Yönlendirmesi
+        EGER Menu_Secimi == "1" ISE
+            CALISTIR: RANDEVU_ALMA_MODULU(Kullanici_ID)
+        ELSE_EGER Menu_Secimi == "2" ISE
+            CALISTIR: TAHLIL_GORUNTULEME_MODULU(Kullanici_ID)
+        ELSE_EGER Menu_Secimi == "3" ISE
+            DONGU_KIR // Çıkış
+        ELSE
+            EKRANA_YAZ("Geçersiz seçim. Lütfen 1, 2 veya 3 giriniz.")
+        BITIR
+    BITIR: DONGU
+BITIR: ANA_MENU_SECIM
+
+// -----------------------------------------------------
+// III. MODÜLLER (Ayrı fonksiyonlar olarak çağrılır)
+// -----------------------------------------------------
+
+// Not: Bu kısım, daha önce yazılan iki ayrı pseudocode'un içeriğini temsil eder.
+
+// BASLA: RANDEVU_ALMA_MODULU(Kullanici_ID)
+//     ... (Poliklinik Seçimi, Doktor Seçimi, Saat Görüntüleme, Onay, SMS adımları buraya gelir) ...
+// BITIR: RANDEVU_ALMA_MODULU
+
+// BASLA: TAHLIL_GORUNTULEME_MODULU(Kullanici_ID)
+//     ... (Tahlil Listesi, Sonuç Kontrolü, Görüntüleme, PDF İndirme adımları buraya gelir) ...
+// BITIR: TAHLIL_GORUNTULEME_MODULU
+
+
+// -----------------------------------------------------
+// IV. SISTEM KAPANISI
+// -----------------------------------------------------
+
+BASLA: SISTEM_KAPAT
+    EKRANA_YAZ("Sistemden çıkış yapılıyor. Bizi tercih ettiğiniz için teşekkürler.")
+BITIR: SISTEM_KAPAT
+
+GIT: SISTEM_KAPAT
+
+BITIR: HASTANE_MERKEZ_SISTEMI_ALGORITMASI
+DOT kodunda her mod¨ul¨u ayrı subgraph olarak d¨uzenleyebilirsiniz
+
+Harika bir öneri. Ana menü ile birleştirilmiş hastane sisteminin akışını daha net göstermek için her bir modülü (Randevu ve Tahlil) ayrı bir subgraph olarak Graphviz DOT kodunda düzenleyelim. Bu, akış şemasının okunabilirliğini artıracaktır.
+
+Hastane Sistemi Algoritması için DOT Kodu (Subgraph Kullanımı)
+Kod snippet'i
+digraph HospitalSystemFlow {
+    // Grafik Ayarları
+    rankdir=TB; // Yukarıdan Aşağıya Akış
+    node [shape=box, style=filled, fillcolor="#F0F8FF"]; // Genel düğüm stili
+
+    // -----------------------------------------------------
+    // I. MERKEZ BAŞLANGIÇ VE KİMLİK DOĞRULAMA
+    // -----------------------------------------------------
+    start [shape=ellipse, label="BAŞLA: Merkez Sistem"];
+    kimlik_dogrulama_loop [shape=diamond, fillcolor="#FFDAB9", label="KONTROL 1:\nKimlik Bilgileri Doğru mu?"];
+    giris_hata_sayac [shape=box, fillcolor="#FFA07A", label="Hata Sayacı Artır (Çıkış Kontrolü)"];
+    merkez_menu [shape=diamond, label="ANA MENÜ:\nModül Seçimi?"];
+    
+    start -> kimlik_dogrulama_loop;
+    kimlik_dogrulama_loop -> merkez_menu [label="EVET"];
+    kimlik_dogrulama_loop -> giris_hata_sayac [label="HAYIR"];
+    giris_hata_sayac -> kimlik_dogrulama_loop; // Hata limitine ulaşılmadıysa döngü devam eder
+
+    // -----------------------------------------------------
+    // II. MODÜL YÖNLENDİRMESİ
+    // -----------------------------------------------------
+    merkez_menu -> randevu_poliklinik [label="1: Randevu"];
+    merkez_menu -> tahlil_liste [label="2: Tahlil Sonucu"];
+    merkez_menu -> sistem_kapat [label="3: Çıkış"];
+    merkez_menu -> merkez_menu [label="Geçersiz Seçim"];
+
+    // -----------------------------------------------------
+    // III. MODÜL 1: RANDEVU ALMA SİSTEMİ (Subgraph)
+    // -----------------------------------------------------
+    subgraph cluster_randevu {
+        label = "MODÜL 1: RANDEVU ALMA SİSTEMİ";
+        bgcolor="#E6E6FA";
+        
+        randevu_poliklinik [shape=box, label="Poliklinik Seçimi (KONTROL 2)"];
+        randevu_doktor [shape=box, label="Doktor Seçimi (KONTROL 3)"];
+        randevu_saat_varmi [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 4:\nUygun Saat Var mı?"];
+        randevu_saat_sec [shape=box, label="Saat Seçimi (KONTROL 5)"];
+        randevu_onay_sor [shape=diamond, label="Randevu Onaylandı mı?"];
+        randevu_kaydet [shape=box, label="Randevuyu Kaydet (SMS Hazırla)"];
+        randevu_sms [shape=box, fillcolor="#B0E0E6", label="KONTROL 6:\nSMS Gönder"];
+        
+        randevu_poliklinik -> randevu_doktor;
+        randevu_doktor -> randevu_saat_varmi;
+        
+        randevu_saat_varmi -> randevu_saat_sec [label="EVET"];
+        randevu_saat_varmi -> merkez_menu [label="HAYIR"];
+        
+        randevu_saat_sec -> randevu_onay_sor;
+        randevu_onay_sor -> randevu_kaydet [label="EVET"];
+        randevu_onay_sor -> merkez_menu [label="HAYIR (İptal)"];
+        
+        randevu_kaydet -> randevu_sms;
+        randevu_sms -> merkez_menu [label="Modül Sonu"];
+    }
+
+    // -----------------------------------------------------
+    // IV. MODÜL 2: TAHLİL SONUCU GÖRÜNTÜLEME (Subgraph)
+    // -----------------------------------------------------
+    subgraph cluster_tahlil {
+        label = "MODÜL 2: TAHLİL SONUCU GÖRÜNTÜLEME";
+        bgcolor="#FFFACD";
+
+        tahlil_liste [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 2:\nKayıtlı Tahlil Var mı?"];
+        tahlil_sec [shape=box, label="Tahlil Seçimi"];
+        tahlil_hazir [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 3:\nSonuç 'HAZIR' mı?"];
+        tahlil_bekleme [shape=box, fillcolor="#FFA07A", label="Bekleme/Hata Mesajı"];
+        tahlil_goster [shape=box, label="Sonucu Ekranda Göster"];
+        tahlil_pdf_sor [shape=diamond, label="PDF İndirilsin mi?"];
+        tahlil_pdf_indir [shape=box, fillcolor="#B0E0E6", label="KONTROL 4:\nPDF Oluştur/İndir"];
+        
+        tahlil_liste -> tahlil_sec [label="EVET"];
+        tahlil_liste -> sistem_kapat [label="HAYIR"];
+
+        tahlil_sec -> tahlil_hazir;
+        tahlil_hazir -> tahlil_goster [label="HAZIR"];
+        tahlil_hazir -> tahlil_bekleme [label="İŞLEMDE/HATALI"];
+        
+        tahlil_bekleme -> merkez_menu [label="Modül Sonu"];
+        
+        tahlil_goster -> tahlil_pdf_sor;
+        tahlil_pdf_sor -> tahlil_pdf_indir [label="EVET"];
+        tahlil_pdf_sor -> merkez_menu [label="HAYIR/Modül Sonu"];
+
+        tahlil_pdf_indir -> merkez_menu [label="Modül Sonu"];
+    }
+
+    // -----------------------------------------------------
+    // V. SİSTEM KAPANIŞI
+    // -----------------------------------------------------
+    sistem_kapat [shape=ellipse, label="BİTİR"];
+    
+    giris_hata_sayac -> sistem_kapat [label="Hata Limiti Doldu"];
+}
