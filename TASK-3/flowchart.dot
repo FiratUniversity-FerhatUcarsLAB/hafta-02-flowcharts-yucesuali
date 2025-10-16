@@ -1,0 +1,93 @@
+digraph HospitalSystemFlow {
+    // Grafik Ayarları
+    rankdir=TB; // Yukarıdan Aşağıya Akış
+    node [shape=box, style=filled, fillcolor="#F0F8FF"]; // Genel düğüm stili
+
+    // -----------------------------------------------------
+    // I. MERKEZ BAŞLANGIÇ VE KİMLİK DOĞRULAMA
+    // -----------------------------------------------------
+    start [shape=ellipse, label="BAŞLA: Merkez Sistem"];
+    kimlik_dogrulama_loop [shape=diamond, fillcolor="#FFDAB9", label="KONTROL 1:\nKimlik Bilgileri Doğru mu?"];
+    giris_hata_sayac [shape=box, fillcolor="#FFA07A", label="Hata Sayacı Artır (Çıkış Kontrolü)"];
+    merkez_menu [shape=diamond, label="ANA MENÜ:\nModül Seçimi?"];
+    
+    start -> kimlik_dogrulama_loop;
+    kimlik_dogrulama_loop -> merkez_menu [label="EVET"];
+    kimlik_dogrulama_loop -> giris_hata_sayac [label="HAYIR"];
+    giris_hata_sayac -> kimlik_dogrulama_loop; // Hata limitine ulaşılmadıysa döngü devam eder
+
+    // -----------------------------------------------------
+    // II. MODÜL YÖNLENDİRMESİ
+    // -----------------------------------------------------
+    merkez_menu -> randevu_poliklinik [label="1: Randevu"];
+    merkez_menu -> tahlil_liste [label="2: Tahlil Sonucu"];
+    merkez_menu -> sistem_kapat [label="3: Çıkış"];
+    merkez_menu -> merkez_menu [label="Geçersiz Seçim"];
+
+    // -----------------------------------------------------
+    // III. MODÜL 1: RANDEVU ALMA SİSTEMİ (Subgraph)
+    // -----------------------------------------------------
+    subgraph cluster_randevu {
+        label = "MODÜL 1: RANDEVU ALMA SİSTEMİ";
+        bgcolor="#E6E6FA";
+        
+        randevu_poliklinik [shape=box, label="Poliklinik Seçimi (KONTROL 2)"];
+        randevu_doktor [shape=box, label="Doktor Seçimi (KONTROL 3)"];
+        randevu_saat_varmi [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 4:\nUygun Saat Var mı?"];
+        randevu_saat_sec [shape=box, label="Saat Seçimi (KONTROL 5)"];
+        randevu_onay_sor [shape=diamond, label="Randevu Onaylandı mı?"];
+        randevu_kaydet [shape=box, label="Randevuyu Kaydet (SMS Hazırla)"];
+        randevu_sms [shape=box, fillcolor="#B0E0E6", label="KONTROL 6:\nSMS Gönder"];
+        
+        randevu_poliklinik -> randevu_doktor;
+        randevu_doktor -> randevu_saat_varmi;
+        
+        randevu_saat_varmi -> randevu_saat_sec [label="EVET"];
+        randevu_saat_varmi -> merkez_menu [label="HAYIR"];
+        
+        randevu_saat_sec -> randevu_onay_sor;
+        randevu_onay_sor -> randevu_kaydet [label="EVET"];
+        randevu_onay_sor -> merkez_menu [label="HAYIR (İptal)"];
+        
+        randevu_kaydet -> randevu_sms;
+        randevu_sms -> merkez_menu [label="Modül Sonu"];
+    }
+
+    // -----------------------------------------------------
+    // IV. MODÜL 2: TAHLİL SONUCU GÖRÜNTÜLEME (Subgraph)
+    // -----------------------------------------------------
+    subgraph cluster_tahlil {
+        label = "MODÜL 2: TAHLİL SONUCU GÖRÜNTÜLEME";
+        bgcolor="#FFFACD";
+
+        tahlil_liste [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 2:\nKayıtlı Tahlil Var mı?"];
+        tahlil_sec [shape=box, label="Tahlil Seçimi"];
+        tahlil_hazir [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 3:\nSonuç 'HAZIR' mı?"];
+        tahlil_bekleme [shape=box, fillcolor="#FFA07A", label="Bekleme/Hata Mesajı"];
+        tahlil_goster [shape=box, label="Sonucu Ekranda Göster"];
+        tahlil_pdf_sor [shape=diamond, label="PDF İndirilsin mi?"];
+        tahlil_pdf_indir [shape=box, fillcolor="#B0E0E6", label="KONTROL 4:\nPDF Oluştur/İndir"];
+        
+        tahlil_liste -> tahlil_sec [label="EVET"];
+        tahlil_liste -> sistem_kapat [label="HAYIR"];
+
+        tahlil_sec -> tahlil_hazir;
+        tahlil_hazir -> tahlil_goster [label="HAZIR"];
+        tahlil_hazir -> tahlil_bekleme [label="İŞLEMDE/HATALI"];
+        
+        tahlil_bekleme -> merkez_menu [label="Modül Sonu"];
+        
+        tahlil_goster -> tahlil_pdf_sor;
+        tahlil_pdf_sor -> tahlil_pdf_indir [label="EVET"];
+        tahlil_pdf_sor -> merkez_menu [label="HAYIR/Modül Sonu"];
+
+        tahlil_pdf_indir -> merkez_menu [label="Modül Sonu"];
+    }
+
+    // -----------------------------------------------------
+    // V. SİSTEM KAPANIŞI
+    // -----------------------------------------------------
+    sistem_kapat [shape=ellipse, label="BİTİR"];
+    
+    giris_hata_sayac -> sistem_kapat [label="Hata Limiti Doldu"];
+}
