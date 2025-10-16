@@ -1,0 +1,98 @@
+digraph ATM_Para_Cekme_Sistemi {
+    // Grafik Ayarları
+    rankdir=TB; // Akış yönü: Yukarıdan Aşağıya (Top to Bottom)
+    
+    // Düğüm Şekilleri Tanımlamaları
+    node [shape=oval, style=filled, fillcolor="#C1FFC1"]; // Başla/Bitir
+    BASLA [label="BAŞLA"];
+    BITIR [label="BİTİR"];
+    
+    node [shape=parallelogram, style=filled, fillcolor="#FFFFB3"]; // Girdi/Çıktı (OKU/YAZ)
+    OKU_GIRIS_PIN [label="OKU GIRIS_PIN"];
+    YAZ_PIN_HATALI [label="YAZ Hatalı PIN... Kalan hak:"];
+    YAZ_PIN_BASARILI [label="YAZ PIN Doğrulama Başarılı"];
+    YAZ_PIN_BLOKE [label="YAZ PIN blokesi. Sistem kapatılıyor."];
+    OKU_TUTAR [label="OKU CEKILECEK_TUTAR"];
+    YAZ_TUTAR_HATALI [label="YAZ Hatalı tutar."];
+    YAZ_LIMIT_ASIMI [label="YAZ Günlük limit aşıldı."];
+    YAZ_BAKIYE_YETERSIZ [label="YAZ Yetersiz bakiye."];
+    YAZ_ISLEM_BASARILI [label="YAZ İşlem başarılı. Kalan Bakiye:"];
+    OKU_TEKRAR [label="OKU ISLEM_TEKRAR"];
+    YAZ_KAPATMA [label="YAZ İşlemleriniz için teşekkürler."];
+
+    node [shape=box, style=filled, fillcolor="#ADD8E6"]; // İşlem (DEĞİŞKEN/ATAMA)
+    SABIT_VE_DEGISKENLER [label="SABITLER ve DEĞISKENLER\n(Başlangıç Değerleri)"];
+    ARTTIR_DENEME [label="PIN_DENEME_SAYISI + 1"];
+    DEGER_DEGISIMI [label="Bakiye, Günlük Toplam Güncelle"];
+    PIN_DONGUSU_SON [label="PIN_DONGUSU_DEVAM = YANLIS"];
+    ISLEM_DONGUSU_SON [label="ISLEM_DONGUSU_DEVAM = YANLIS"];
+    
+    node [shape=diamond, style=filled, fillcolor="#FFB3B3"]; // Karar (EĞER-İSE/DÖNGÜ)
+    DONGU_TEKRAR [label="DÖNGÜ (ISLEM_TEKRAR == 'E' VEYA 'e')"];
+    DONGU_PIN [label="DÖNGÜ (PIN_DONGUSU_DEVAM == DOGRU)"];
+    KARAR_PIN_DOGRU [label="EĞER (GIRIS_PIN == DOGRU_PIN) İSE"];
+    KARAR_PIN_HAK [label="EĞER (PIN_DENEME_SAYISI >= MAKS_DENEME) İSE"];
+    DONGU_ISLEM [label="DÖNGÜ (ISLEM_DONGUSU_DEVAM == DOGRU)"];
+    KARAR_TUTAR_KATI [label="EĞER (TUTAR MOD 20 == 0) İSE"];
+    KARAR_GUNLUK_LIMIT [label="EĞER (TOPLAM + TUTAR <= LIMIT) İSE"];
+    KARAR_BAKIYE [label="EĞER (TUTAR <= BAKIYE) İSE"];
+    
+    // Akış (Oklar)
+    BASLA -> SABIT_VE_DEGISKENLER;
+    SABIT_VE_DEGISKENLER -> DONGU_TEKRAR;
+
+    // Dış İşlem Tekrarı Döngüsü
+    DONGU_TEKRAR -> DONGU_PIN [label="DOĞRU"];
+    DONGU_TEKRAR -> YAZ_KAPATMA [label="YANLIŞ"];
+
+    // 1. PIN Doğrulama Döngüsü
+    DONGU_PIN -> OKU_GIRIS_PIN [label="DOĞRU"];
+    OKU_GIRIS_PIN -> KARAR_PIN_DOGRU;
+    
+    // PIN Doğru İse
+    KARAR_PIN_DOGRU -> PIN_DONGUSU_SON [label="DOĞRU"];
+    PIN_DONGUSU_SON -> YAZ_PIN_BASARILI;
+    YAZ_PIN_BASARILI -> DONGU_ISLEM; // PIN başarılı, işlem döngüsüne geç
+
+    // PIN Yanlış İse
+    KARAR_PIN_DOGRU -> ARTTIR_DENEME [label="YANLIŞ"];
+    ARTTIR_DENEME -> YAZ_PIN_HATALI;
+    YAZ_PIN_HATALI -> KARAR_PIN_HAK;
+
+    // PIN Hak Kontrolü
+    KARAR_PIN_HAK -> YAZ_PIN_BLOKE [label="DOĞRU"];
+    YAZ_PIN_BLOKE -> BITIR; // GİT BİTİR_İŞLEM (Akış sonu)
+    KARAR_PIN_HAK -> DONGU_PIN [label="YANLIŞ"]; // Hak varsa PIN döngüsüne geri dön
+
+    // 2. Para Çekme İşlem Döngüsü
+    DONGU_ISLEM -> OKU_TUTAR [label="DOĞRU"];
+    DONGU_ISLEM -> OKU_TEKRAR [label="YANLIŞ"]; // İşlem başarılı/hatalı olsa da döngüden çıkış
+
+    // 3. Tutar Katı Kontrolü
+    OKU_TUTAR -> KARAR_TUTAR_KATI;
+    KARAR_TUTAR_KATI -> YAZ_TUTAR_HATALI [label="YANLIŞ"];
+    YAZ_TUTAR_HATALI -> DONGU_ISLEM; // Tekrar tutar iste
+
+    // 4. Günlük Limit Kontrolü
+    KARAR_TUTAR_KATI -> KARAR_GUNLUK_LIMIT [label="DOĞRU"];
+    KARAR_GUNLUK_LIMIT -> YAZ_LIMIT_ASIMI [label="YANLIŞ"];
+    YAZ_LIMIT_ASIMI -> DONGU_ISLEM; // Tekrar tutar iste
+
+    // 5. Bakiye Kontrolü
+    KARAR_GUNLUK_LIMIT -> KARAR_BAKIYE [label="DOĞRU"];
+    KARAR_BAKIYE -> YAZ_BAKIYE_YETERSIZ [label="YANLIŞ"];
+    YAZ_BAKIYE_YETERSIZ -> DONGU_ISLEM; // Tekrar tutar iste
+
+    // İşlem Başarılı
+    KARAR_BAKIYE -> DEGER_DEGISIMI [label="DOĞRU"];
+    DEGER_DEGISIMI -> YAZ_ISLEM_BASARILI;
+    YAZ_ISLEM_BASARILI -> ISLEM_DONGUSU_SON;
+    ISLEM_DONGUSU_SON -> OKU_TEKRAR; // İşlem döngüsünden çıkış
+
+    // 6. İşlem Tekrarı Seçeneği
+    OKU_TEKRAR -> DONGU_TEKRAR;
+
+    YAZ_KAPATMA -> BITIR;
+    
+    // BITIR_ISLEM Etiketi (Akış şemasında doğrudan BITIR düğümüne gider)
+}
