@@ -1,0 +1,60 @@
+digraph SmartHomeSecurity {
+    // Grafik Ayarları
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor="#F0F8FF"];
+
+    // Başlangıç ve Bitiş Düğümleri
+    start [shape=ellipse, label="BAŞLA: SİSTEM KURULUMU"];
+    sistem_aktif [shape=box, label="Sistem Durumu = AKTIF\nBildirim Adreslerini Yükle"];
+    end [shape=ellipse, label="SİSTEM KAPAT"];
+    
+    // İşlem Düğümleri
+    sensor_oku [shape=box, label="SENSÖR_OKUMA\n(Tüm Verileri Topla)"];
+    eylem_bekle [shape=box, label="Sistem Güvenli / Beklemede"];
+    siren_ac [shape=box, label="Siren Durumu = AÇIK\nSIREN_AC()"];
+    bildirim_gonder [shape=box, fillcolor="#F0E68C", label="BİLDİRİM_GONDER()"];
+    
+    // Kontrol/Karar Düğümleri
+    tehdit_algilama [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 1, 2, 3:\nTehdit Seviyesi?"];
+    alarm_aktif_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 4:\nSiren Durumu KAPALI mı?"];
+    bildirim_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 5:\nSon Bildirim 5 Dk. Önce miydi?"];
+    alarm_reset [shape=diamond, label="Alarm Sıfırlama\nKomutu Geldi mi?"];
+
+    // -----------------------------------------------------
+    // AKIŞ VE BAĞLANTILAR
+    // -----------------------------------------------------
+
+    // I. Sistem Başlangıcı ve Ana Döngüye Giriş
+    start -> sistem_aktif;
+    sistem_aktif -> sensor_oku;
+
+    // II. Sonsuz Ana Döngü (Sensör Okuma ile Başlar)
+    sensor_oku -> tehdit_algilama;
+    
+    // A. YÜKSEK/ACİL TEHDİT
+    tehdit_algilama -> alarm_aktif_kontrol [label="YÜKSEK / YANGIN"];
+
+    alarm_aktif_kontrol -> siren_ac [label="HAYIR"]; // Siren kapalı ise aç
+    alarm_aktif_kontrol -> bildirim_kontrol [label="EVET"]; // Siren zaten açıksa, direkt bildirime geç
+    siren_ac -> bildirim_kontrol;
+
+    bildirim_kontrol -> bildirim_gonder [label="EVET"]; // Bildirim sıklığı uygun
+    bildirim_kontrol -> alarm_reset [label="HAYIR"]; // Bildirim sıklığı uygun değilse sıfırlamaya atla
+    bildirim_gonder -> alarm_reset;
+
+    // B. ORTA TEHDİT
+    tehdit_algilama -> bildirim_gonder_orta [label="ORTA HAREKET"];
+    bildirim_gonder_orta [shape=box, label="UYARI Bildirimi Gönder"];
+    bildirim_gonder_orta -> alarm_reset;
+    
+    // C. GÜVENLİ DURUM
+    tehdit_algilama -> eylem_bekle [label="GÜVENLİ"];
+    eylem_bekle -> alarm_reset;
+
+    // III. Alarm Sıfırlama ve Döngü Geri Dönüşü
+    alarm_reset -> sensor_oku [label="SÜREKLİ\n(HAYIR)"]; // Alarm sıfırlama komutu gelmediyse döngü devam eder
+
+    alarm_reset -> sistem_aktif_kapat [label="EVET\n(Sıfırla)"]; 
+    sistem_aktif_kapat [shape=box, fillcolor="#90EE90", label="Siren KAPAT\nSistem Durumu = PASIF"];
+    sistem_aktif_kapat -> end; // Sistem PASIF/KAPAT durumuna geçerek döngüden çıkar.
+}
