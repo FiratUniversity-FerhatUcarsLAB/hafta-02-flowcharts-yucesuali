@@ -1,0 +1,396 @@
+“Universite ders kayıt sisteminin genel akı¸sını a¸cıkla: giri¸s, ders listesi, ders ¨
+
+se¸cimi, kontroller, onaylama.” 
+
+Üniversite ders kayıt sistemi, öğrencilerin akademik dönem başında alacakları dersleri seçmeleri ve onaylamaları için tasarlanmış kritik bir süreçtir. İşte bu sistemin genel akışının adım adım açıklaması:
+
+Üniversite Ders Kayıt Sistemi Genel Akışı
+Ders kayıt süreci genellikle aşağıdaki beş ana aşamadan oluşur:
+
+1. Kimlik Doğrulama ve Sisteme Giriş
+Bu aşama, öğrencinin sisteme güvenli bir şekilde erişmesini sağlar.
+
+Giriş Sayfası: Öğrenci, üniversitenin öğrenci bilgi sistemine (ÖBS) erişir.
+
+Kimlik Doğrulama: Öğrenci, sistem tarafından tanımlanan benzersiz kimlik bilgileriyle (Öğrenci Numarası, T.C. Kimlik Numarası, Şifre) giriş yapar.
+
+Kayıt Dönemi Kontrolü: Sisteme giriş yapan öğrencinin ders kayıt ekranına yönlendirilmeden önce, o öğrenci için kayıtların açık olup olmadığı kontrol edilir. (Örneğin, birinci sınıf öğrencisi ise kayıtlar henüz açılmamış olabilir).
+
+Giriş Başarısı: Başarılı giriş yapan öğrenci ana menüye veya doğrudan ders kayıt ekranına yönlendirilir.
+
+2. Ders Listesi Görüntüleme
+Giriş sonrası öğrenciye, ilgili dönemde alabileceği dersler sunulur.
+
+Zorunlu Dersler: Öğrencinin bölüm müfredatına göre bu dönemde mutlaka alması gereken dersler otomatik olarak listelenir (Genellikle önceden seçilmiş olarak gelir).
+
+Seçmeli Dersler: Öğrencinin mezuniyet için tamamlaması gereken krediye katkıda bulunacak, farklı havuzlardan seçebileceği dersler listelenir.
+
+Kalan Dersler (Başarısız Olunan Dersler): Daha önceki dönemlerde alıp başarısız olduğu veya devamsızlıktan kaldığı (FF, FD, NA vb.) dersler, öncelikli olarak görünür ve genellikle bu dersleri tekrar seçmek zorundadır.
+
+Ders Bilgileri: Her dersin; Kodu, Adı, Kredisi, AKTS'si, Öğretim Üyesi ve Açılan Şube/Grup bilgileri görüntülenir.
+
+3. Ders Seçimi
+Öğrenci, kendisine sunulan ders listesinden seçimlerini yapar.
+
+Zorunlu Ders Seçimi: Zorunlu dersler genellikle otomatik olarak sepete eklenir. Öğrenci, birden fazla şubesi varsa (örneğin A, B, C grupları), uygun olan şubeyi seçer.
+
+Seçmeli Ders Seçimi: Öğrenci, belirlediği seçmeli ders havuzlarından (alan içi/alan dışı, genel seçmeli vb.) gerekli kredi sayısını dolduracak kadar dersi seçer.
+
+Ders Ekleme: Seçilen dersler, geçici bir "sepet" veya "taslak kayıt" alanına eklenir.
+
+4. Kontroller (Çakışma ve Önkoşul)
+Bu aşama, seçilen derslerin akademik kurallara uygunluğunu kontrol eden kritik bir adımdır.
+
+Kredi Limiti Kontrolü: Öğrencinin alabileceği maksimum ve minimum kredi (veya AKTS) limitlerine uyulup uyulmadığı kontrol edilir. (Örneğin, minimum 30 AKTS, maksimum 45 AKTS).
+
+Ders Çakışması Kontrolü: Seçilen derslerin saatlerinin, özellikle teorik dersler ve uygulamalar dahil, birbirleriyle zaman açısından çakışıp çakışmadığı kontrol edilir. Çakışma varsa öğrencinin kaydı engellenir ve uyarılır.
+
+Önkoşul Kontrolü: Öğrencinin seçtiği dersin bir önkoşulu (daha önce alınması gereken başka bir ders) varsa ve öğrenci bu önkoşulu sağlamıyorsa (başarısız olmuşsa veya hiç almamışsa), bu dersi seçmesi engellenir.
+
+Kontenjan Kontrolü: Seçilen dersin açılan şubesindeki öğrenci kontenjanının dolup dolmadığı kontrol edilir. Kontenjan doluysa, öğrencinin o şubeyi seçmesi engellenir.
+
+5. Onaylama ve Kayıt Tamamlama
+Tüm kontrollerden başarıyla geçen öğrenci, kaydını kesinleştirir.
+
+Kesinleştirme: Öğrenci, son seçtiği ders listesini (ders kodu, adı, kredisi, şubesi) son bir kez gözden geçirir.
+
+Danışman Onayı: Öğrencinin seçtiği dersler, genellikle öğrencinin akademik danışmanının onayına sunulur. Danışman, öğrencinin akademik durumuna uygunluğunu kontrol ettikten sonra kaydı onaylar. (Bazı sistemlerde öğrenci kesinleştirir, danışman daha sonra kontrol eder.)
+
+Kesin Kayıt: Kayıt, öğrenci ve/veya danışman tarafından onaylandıktan sonra kesinleşir ve sistemde "Kayıt Tamamlandı" olarak işaretlenir.
+
+Belge/Özet: Öğrenciye, kayıt yaptığı derslerin dökümünü içeren bir "Ders Kayıt Formu" veya özeti sunulur (Genellikle PDF olarak indirilebilir).
+
+Bu adımların başarılı bir şekilde tamamlanması, öğrencinin o dönem için akademik yükümlülüklerini yerine getirdiğini gösterir.
+
+“Ders kaydında yapılması gereken kontrolleri listele: kontenjan, ¨on ko¸sul,
+
+zaman ¸cakı¸sması, kredi limiti, danı¸sman onayı.” 
+
+Üniversite ders kayıt sisteminde öğrencinin seçtiği derslerin akademik kurallara ve sistem limitlerine uygunluğunu sağlamak için yapılması gereken kontrollerin detaylı listesi aşağıdadır:
+
+Ders Kayıt Sisteminde Yapılması Gereken Kontroller
+Bu kontroller, genellikle öğrencinin ders seçimini tamamlayıp kaydı kesinleştirmeye çalıştığı aşamada devreye girer.
+
+1. Kontenjan Kontrolü
+Amaç: Bir dersin veya şubenin kapasitesini (maksimum öğrenci sayısını) aşmamak.
+
+Kontrol Mekanizması: Öğrencinin seçtiği dersin/şubenin mevcut kontenjanı ile o an kayıtlı olan öğrenci sayısı karşılaştırılır.
+
+Sonuç:
+
+Kontenjan dolmuşsa: Öğrencinin o dersi/şubeyi seçmesi engellenir ve "Kontenjan Dolu" uyarısı verilir.
+
+Kontenjan varsa: Kayda izin verilir ve kayıtlı öğrenci sayısı anlık olarak artırılır.
+
+2. Önkoşul (Prerequisite) Kontrolü
+Amaç: Öğrencinin, seçtiği dersi alabilmek için gerekli temel bilgi ve becerilere sahip olduğundan emin olmak.
+
+Kontrol Mekanizması: Seçilen dersin gerektirdiği önkoşul dersler listelenir. Öğrencinin transkripti incelenerek bu önkoşul dersleri başarıyla (geçer notla) tamamlayıp tamamlamadığı kontrol edilir.
+
+Sonuç:
+
+Önkoşul dersi alınmamış veya kalınmışsa: Öğrencinin dersi seçmesi engellenir ve "Önkoşul dersini sağlamıyorsunuz" uyarısı verilir.
+
+Önkoşul sağlanıyorsa: Derse kayda izin verilir.
+
+3. Zaman Çakışması Kontrolü
+Amaç: Öğrencinin seçtiği iki veya daha fazla dersin (teorik, laboratuvar, uygulama) aynı saatte planlanmamış olması.
+
+Kontrol Mekanizması: Öğrencinin seçtiği tüm derslerin ve şubelerin ders programları karşılaştırılarak, herhangi bir gün ve saat diliminde çakışma olup olmadığı kontrol edilir.
+
+Sonuç:
+
+Çakışma tespit edilirse: Öğrencinin son seçtiği dersin kaydı engellenir ve "Seçtiğiniz ders, X dersi ile Y günü Z saatinde çakışmaktadır" uyarısı verilir.
+
+Çakışma yoksa: Kayda izin verilir.
+
+4. Kredi Limiti Kontrolü
+Amaç: Öğrencinin akademik takvimde belirtilen minimum ve maksimum kredi yükünü aşmamasını sağlamak.
+
+Kontrol Mekanizması: Seçilen tüm derslerin kredi (veya AKTS) toplamı hesaplanır ve üniversite veya bölüm tarafından belirlenen:
+
+Minimum Kredi Limiti
+
+Maksimum Kredi Limiti (Başarı durumuna göre değişebilir)
+
+ile karşılaştırılır.
+
+Sonuç:
+
+Toplam kredi limitlerin altında veya üstünde ise: Kayıt kesinleştirmesi engellenir ve öğrenciye "Kredi limitini (örneğin 40 AKTS) aşıyorsunuz/altındasınız" uyarısı verilir.
+
+Limitler dahilindeyse: Kayda izin verilir.
+
+5. Danışman Onayı Kontrolü
+Amaç: Öğrencinin akademik danışmanının, öğrencinin ders seçiminin müfredata ve akademik hedeflerine uygunluğunu denetlemesi.
+
+Kontrol Mekanizması: Öğrenci ders seçimini tamamlayıp kesinleştirdikten sonra, sistem kaydı "Danışman Onayına Gönderildi" durumuna getirir.
+
+Sonuç:
+
+Onaydan Önce: Kayıt geçici durumdadır ve değiştirilebilir/iptal edilebilir.
+
+Danışman Onaylarsa: Kayıt kesinleşir ve kalıcı hale gelir.
+
+Danışman Reddederse: Kayıt, öğrenciye düzeltilmesi için geri gönderilir (Hata mesajı ile birlikte).
+
+Ek Kontroller (Duruma Bağlı)
+Maddi Yükümlülük Kontrolü: Harç/öğrenim ücreti borcu olan öğrencilerin kaydı, ödeme yapılana kadar askıya alınabilir veya engellenebilir.
+
+Başarısız Ders Tekrar Kontrolü: Öğrencinin daha önce başarısız olduğu bir dersi tekrar seçmek zorunda olup olmadığı kontrol edilir.
+
+Ders Tekrar Sayısı Kontrolü: Öğrencinin aynı dersi üçüncü veya dördüncü kez alıp almadığı kontrol edilerek özel izin gerekip gerekmediği belirlenir.
+
+“T¨um bu kontrollerle birlikte detaylı pseudocode yaz. ˙
+
+I¸c i¸ce EGER- ˘ ˙
+
+ISE
+
+yapıları ve d¨ong¨uler kullan.”
+
+Harika. Üniversite ders kayıt sisteminin tüm aşamalarını ve kritik kontrol noktalarını içeren detaylı pseudocode algoritmasını, iç içe EĞER-İSE yapıları ve döngüler kullanarak oluşturalım.
+
+Üniversite Ders Kayıt Sistemi Detaylı Pseudocode
+Kod snippet'i
+BASLA: UNIVERSITE_DERS_KAYIT_SISTEMI
+
+// -----------------------------------------------------
+// I. KIMLIK DOGRULAMA VE GIRIS
+// -----------------------------------------------------
+
+BASLA: OGRENCI_GIRISI
+    DONGU: Giris_Basarili_Olana_Kadar
+        Ogrenci_No = KULLANICIDAN_AL("Öğrenci Numarası:")
+        Sifre = KULLANICIDAN_AL("Şifre:")
+        
+        // KONTROL NOKTASI A: Kullanıcı Bilgileri
+        EGER VERITABANI_KONTROL(Ogrenci_No, Sifre) ISE
+            // KONTROL NOKTASI B: Harç/Maddi Yükümlülük
+            EGER HARC_BORCU_VAR_MI(Ogrenci_No) ISE
+                EKRANA_YAZ("Kaydınız için önce harç/öğrenim ücreti borcunuzu ödemeniz gerekmektedir.")
+                GIT: SISTEM_KAPAT
+            ELSE
+                Kullanici_Oturumu = AC
+                EKRANA_YAZ("Giriş başarılı.")
+                DONGU_KIR
+            BITIR
+        ELSE
+            EKRANA_YAZ("Hatalı kullanıcı adı veya şifre.")
+        BITIR
+    BITIR: DONGU
+BITIR: OGRENCI_GIRISI
+
+// -----------------------------------------------------
+// II. DERS LISTESI GORUNTULEME VE SECIM
+// -----------------------------------------------------
+
+BASLA: DERS_SECIMI_VE_KONTROLLER
+    Zorunlu_Dersler = VERITABANINDAN_AL("Zorunlu Dersler", Ogrenci_No)
+    Secmeli_Dersler = VERITABANINDAN_AL("Seçmeli Havuzları", Ogrenci_No)
+    Ders_Sepeti = BOS_LISTE
+    Toplam_Kredi = 0
+    
+    EKRANA_GOSTER(Zorunlu_Dersler + Secmeli_Dersler)
+    
+    DONGU: Yeni_Ders_Secildigi_Sürece
+        Secilen_Ders_Kodu = KULLANICIDAN_AL("Seçmek istediğiniz ders kodu:")
+        Secilen_Sube = KULLANICIDAN_AL("Seçmek istediğiniz şube:")
+        
+        Ders_Bilgisi = DERS_VERITABANINDAN_AL(Secilen_Ders_Kodu, Secilen_Sube)
+        
+        EGER Ders_Bilgisi BOS_DEGIL_ISE
+            
+            // KONTROL NOKTASI 1: Önkoşul Kontrolü
+            EGER ONKOSUL_KONTROL(Ogrenci_No, Secilen_Ders_Kodu) ISE
+            
+                // KONTROL NOKTASI 2: Kontenjan Kontrolü
+                EGER Ders_Bilgisi.Kontenjan > Ders_Bilgisi.Kayitli_Ogrenci_Sayisi ISE
+                
+                    // KONTROL NOKTASI 3: Kredi Limiti Kontrolü (Maksimum)
+                    EGER (Toplam_Kredi + Ders_Bilgisi.Kredi) <= MAKSIMUM_KREDI_LIMITI(Ogrenci_No) ISE
+                        
+                        // KONTROL NOKTASI 4: Zaman Çakışması Kontrolü
+                        EGER ZAMAN_CAKISMASI_VAR_MI(Ders_Sepeti, Ders_Bilgisi) ISE
+                            EKRANA_YAZ("HATA: Seçtiğiniz ders, sepetinizdeki başka bir ders ile çakışmaktadır.")
+                        ELSE
+                            // Tüm Kontroller Başarılı
+                            DERS_SEPETE_EKLE(Ders_Sepeti, Ders_Bilgisi)
+                            Toplam_Kredi = Toplam_Kredi + Ders_Bilgisi.Kredi
+                            EKRANA_YAZ(Secilen_Ders_Kodu + " başarıyla sepete eklendi.")
+                        BITIR // Zaman Çakışması Kontrolü
+                        
+                    ELSE
+                        EKRANA_YAZ("HATA: Maksimum kredi limitini (" + MAKSIMUM_KREDI_LIMITI(Ogrenci_No) + " kredi) aşıyorsunuz.")
+                    BITIR // Kredi Limiti Kontrolü
+                    
+                ELSE
+                    EKRANA_YAZ("HATA: Seçilen dersin/şubenin kontenjanı dolmuştur.")
+                BITIR // Kontenjan Kontrolü
+                
+            ELSE
+                EKRANA_YAZ("HATA: Seçilen dersin önkoşulunu sağlamıyorsunuz (Eksik/başarısız ders).")
+            BITIR // Önkoşul Kontrolü
+            
+        ELSE
+            EKRANA_YAZ("HATA: Geçersiz ders kodu veya şube.")
+        BITIR
+        
+        EGER KULLANICIDAN_AL("Başka ders seçmek ister misiniz? (H/E)") == "H" ISE
+            DONGU_KIR
+        BITIR
+    BITIR: DONGU
+BITIR: DERS_SECIMI_VE_KONTROLLER
+
+// -----------------------------------------------------
+// III. KAYIT KESINLEŞTİRME VE ONAY
+// -----------------------------------------------------
+
+BASLA: KAYIT_KESINLESTIRME
+    
+    // KONTROL NOKTASI 5: Kredi Limiti Kontrolü (Minimum)
+    EGER Toplam_Kredi < MINIMUM_KREDI_LIMITI(Ogrenci_No) ISE
+        EKRANA_YAZ("HATA: Kaydınızı kesinleştirmek için minimum kredi limitini (" + MINIMUM_KREDI_LIMITI(Ogrenci_No) + " kredi) doldurmanız gerekmektedir.")
+        GIT: DERS_SECIMI_VE_KONTROLLER
+    BITIR
+    
+    EKRANA_GOSTER("Seçilen Dersler: " + Ders_Sepeti)
+    Kullanici_Onayi = KULLANICIDAN_AL("Seçimlerinizi onaylıyor musunuz? (E/H)")
+    
+    EGER Kullanici_Onayi == "E" ISE
+        KAYDI_GECICI_KAYDET(Ogrenci_No, Ders_Sepeti, "BEKLEMEDE")
+        
+        // KONTROL NOKTASI 6: Danışman Onayına Gönderme
+        EKRANA_YAZ("Ders kaydınız, danışman onayı için gönderilmiştir.")
+        
+        // Arka Planda Danışman Onay Süreci Başlatılır
+        SONUC = DANISMAN_ONAYI_BEKLE(Ogrenci_No)
+        
+        EGER SONUC == "ONAYLANDI" ISE
+            KAYDI_KESINLESTIR(Ogrenci_No)
+            EKRANA_YAZ("Ders kaydınız başarıyla tamamlanmıştır. Kayıt formunuz oluşturulmuştur.")
+            PDF_FORMU_OLUSTUR(Ogrenci_No)
+        ELSE_EGER SONUC == "REDDEDILDI" ISE
+            EKRANA_YAZ("Ders kaydınız danışman tarafından REDDEDİLMİŞTİR. Lütfen danışmanınızla görüşerek düzeltin.")
+            GIT: DERS_SECIMI_VE_KONTROLLER
+        BITIR
+        
+    ELSE
+        EKRANA_YAZ("Ders kayıt işlemi iptal edildi.")
+        GIT: DERS_SECIMI_VE_KONTROLLER
+    BITIR
+BITIR: KAYIT_KESINLESTIRME
+
+// -----------------------------------------------------
+// IV. SISTEM KAPANISI
+// -----------------------------------------------------
+
+BASLA: SISTEM_KAPAT
+    EKRANA_YAZ("Sistemden çıkış yapılıyor.")
+BITIR: SISTEM_KAPAT
+
+GIT: SISTEM_KAPAT
+
+BITIR: UNIVERSITE_DERS_KAYIT_SISTEMI
+“Bu pseudocode’u Graphviz DOT diline ¸cevir. Her kontrol noktasını
+
+diamond ile g¨oster.”
+
+Harika. Ders kayıt sistemi için oluşturduğumuz detaylı pseudocode'u, tüm iç içe yapıları ve kontrol noktalarını yansıtacak şekilde Graphviz DOT formatına çevirelim. Her kontrol noktasını (karar anını) açıkça bir elmas (diamond) şekliyle göstereceğiz.
+
+Kod snippet'i
+digraph UniversityCourseRegistration {
+    // Grafik Ayarları
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor="#F0F8FF"];
+
+    // Başlangıç ve Bitiş Düğümleri
+    start [shape=ellipse, label="BAŞLA: DERS KAYIT SİSTEMİ"];
+    end [shape=ellipse, label="BİTİR"];
+    
+    // İşlem Düğümleri
+    ogrenci_girisi [shape=box, label="Öğrenci No ve Şifre Al"];
+    harc_odeme [shape=box, fillcolor="#FFA07A", label="HATA: Harç Borcu Var\nGIT: SİSTEM_KAPAT"];
+    giris_hata [shape=box, fillcolor="#FFA07A", label="HATA: Hatalı Giriş"];
+    ders_listele [shape=box, label="Dersleri Listele (Zorunlu/Seçmeli)"];
+    ders_al [shape=box, label="Ders Kodu ve Şube Al"];
+    ders_ekle [shape=box, label="Ders Sepete Ekle\nKredi Güncelle"];
+    min_kredi_hata [shape=box, fillcolor="#FFA07A", label="HATA: Minimum Kredi Altında\nGIT: DERS_SECİMİ_VE_KONTROLLER"];
+    onay_sor [shape=diamond, label="Kullanıcı Kaydı Onaylıyor mu?"];
+    red_donus [shape=box, label="Reddedildi. GIT: DERS_SECİMİ_VE_KONTROLLER"];
+    kayit_gecici [shape=box, label="Kaydı Geçici Kaydet\n(Durum: BEKLEMEDE)"];
+    danisman_onay_basarili [shape=box, label="Kaydı Kesinleştir\nPDF Formu Oluştur"];
+    danisman_red [shape=box, fillcolor="#FFA07A", label="HATA: Danışman Reddetti"];
+    
+    // -----------------------------------------------------
+    // Kontrol/Karar Düğümleri (Diamond - KONTROL NOKTASI)
+    // -----------------------------------------------------
+    kimlik_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL A:\nKullanıcı Bilgileri Doğru mu?"];
+    harc_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL B:\nHarç Borcu Var mı?"];
+    devam_et [shape=diamond, label="Başka Ders Seçimi?"];
+
+    // Kontrol Noktaları 1-5
+    onkosul_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 1:\nÖnkoşul Sağlanıyor mu?"];
+    kontenjan_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 2:\nKontenjan Dolu mu?"];
+    maks_kredi_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 3:\nMaksimum Kredi Aşılıyor mu?"];
+    cakisma_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 4:\nZaman Çakışması Var mı?"];
+    min_kredi_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 5:\nMinimum Kredi Dolduruldu mu?"];
+
+    // Kontrol Noktası 6
+    danisman_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 6:\nDanışman Onayladı mı?"];
+
+
+    // -----------------------------------------------------
+    // AKIŞ VE BAĞLANTILAR
+    // -----------------------------------------------------
+
+    // I. Giriş Akışı
+    start -> ogrenci_girisi;
+    ogrenci_girisi -> kimlik_kontrol;
+    
+    kimlik_kontrol -> harc_kontrol [label="EVET"];
+    kimlik_kontrol -> giris_hata [label="HAYIR"];
+    giris_hata -> ogrenci_girisi;
+
+    harc_kontrol -> ders_listele [label="HAYIR"];
+    harc_kontrol -> harc_odeme [label="EVET"];
+    harc_odeme -> end;
+
+    // II. Ders Seçimi ve İç İçe Kontroller
+    ders_listele -> ders_al;
+    
+    ders_al -> onkosul_kontrol;
+
+    onkosul_kontrol -> kontenjan_kontrol [label="EVET"];
+    onkosul_kontrol -> devam_et [label="HAYIR (Hata)"];
+
+    kontenjan_kontrol -> maks_kredi_kontrol [label="HAYIR"]; // Kontenjan Dolu Değil
+    kontenjan_kontrol -> devam_et [label="EVET (Hata)"]; // Kontenjan Dolu
+
+    maks_kredi_kontrol -> cakisma_kontrol [label="HAYIR"]; // Maks Kredi Aşılmıyor
+    maks_kredi_kontrol -> devam_et [label="EVET (Hata)"]; // Maks Kredi Aşılıyor
+
+    cakisma_kontrol -> ders_ekle [label="HAYIR"]; // Çakışma Yok
+    cakisma_kontrol -> devam_et [label="EVET (Hata)"]; // Çakışma Var
+    
+    ders_ekle -> devam_et;
+    devam_et -> ders_al [label="E"];
+    devam_et -> min_kredi_kontrol [label="H"];
+
+    // III. Kayıt Kesinleştirme ve Onay Akışı
+    min_kredi_kontrol -> onay_sor [label="EVET"];
+    min_kredi_kontrol -> min_kredi_hata [label="HAYIR"];
+    min_kredi_hata -> ders_al;
+
+    onay_sor -> kayit_gecici [label="EVET"];
+    onay_sor -> red_donus [label="HAYIR"];
+    red_donus -> ders_al;
+
+    kayit_gecici -> danisman_kontrol;
+
+    danisman_kontrol -> danisman_onay_basarili [label="ONAYLANDI"];
+    danisman_kontrol -> danisman_red [label="REDDEDİLDİ"];
+
+    danisman_onay_basarili -> end;
+    danisman_red -> ders_al;
+}
