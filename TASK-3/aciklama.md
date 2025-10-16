@@ -1,8 +1,10 @@
 Muhammed Ali Yücesu 
 250541065
-Ders kayıt sistemi, öğrencilerin akademik dönem başında ders seçimi yapmasını sağlayan platformdur.
+Bu sistem, hastaların internet üzerinden kolayca randevu almasını sağlar.
 Ana Akış:
-Giriş: Öğrenci, sisteme kimlik bilgileriyle giriş yapar (Harç borcu kontrol edilir).Seçim: Müfredata uygun zorunlu ve seçmeli dersler belirlenir.
-Seçim: Müfredata uygun zorunlu ve seçmeli dersler belirlenir.
-Kontroller: Seçilen dersler; önkoşul, kontenjan, zaman çakışması ve kredi limitleri açısından otomatik olarak kontrol edilir.
-Onay: Tüm kontrollerden geçen ders listesi, danışman onayına sunulur ve onay sonrası kayıt kesinleşir.
+Kimlik Doğrulama: Kullanıcı T.C. Kimlik No ve Doğum Tarihi ile sisteme giriş yapar.
+Seçim: Kullanıcı, randevu almak istediği polikliniği ve ardından doktoru seçer.
+Saat Kontrolü: Sistem, seçilen doktorun uygun randevu saatlerini listeler.
+Onay: Kullanıcı, uygun bir saati seçip randevuyu onaylar.
+Bilgilendirme: Randevu veritabanına kaydedilir ve detayları kullanıcıya SMS ile gönderilir.
+Kritik kontroller, kimlik bilgileri, poliklinik/doktor geçerliliği ve uygun saatlerin varlığı üzerinedir.
