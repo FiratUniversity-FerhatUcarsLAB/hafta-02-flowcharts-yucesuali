@@ -1,7 +1,5 @@
 İsim - Soy isim Muhammed Ali Yücesu
 Öğrenci No:250541065
-
-sistemin kısa açıklaması (maks. 5-6 satır)
 kullanıcının PIN doğrulaması (3 hak sınırlı) ile başlar ve ardından para çekme işlemi için üç temel kontrol yapar:
 ​Tutar Kontrolü: Çekilecek miktarın (örneğin) 20 TL'nin katları olması.
 ​Günlük Limit Kontrolü: İşlemin tanımlı günlük limiti aşmaması.
