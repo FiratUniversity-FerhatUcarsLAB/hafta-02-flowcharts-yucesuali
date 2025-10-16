@@ -1,0 +1,111 @@
+digraph ECommerceFlow {
+    // Grafik Ayarları
+    rankdir=TB; // Yukarıdan Aşağıya Akış
+    node [shape=box, style=filled, fillcolor="#F0F8FF"]; // Genel düğüm stili
+
+    // -----------------------------------------------------
+    // A. Başlangıç ve Giriş Kontrolü
+    // -----------------------------------------------------
+    start [shape=ellipse, label="BAŞLA"];
+    giris_kontrol [shape=diamond, fillcolor="#FFDAB9", label="Kullanıcı Giriş Yapıyor mu?"];
+    giris_basarili [shape=box, label="Giriş Başarılı, Oturum Aç"];
+    giris_misafir [shape=box, label="Misafir Olarak Devam Et"];
+    giris_hata [shape=box, fillcolor="#FFA07A", label="Hatalı Giriş\n(Tekrar Dene)"];
+
+    start -> giris_kontrol;
+    giris_kontrol -> giris_basarili [label="EVET"];
+    giris_kontrol -> giris_misafir [label="HAYIR / Misafir"];
+    giris_kontrol -> giris_hata [label="Giriş Hata"];
+    giris_hata -> giris_kontrol;
+
+    // -----------------------------------------------------
+    // B. Ürün Ekleme ve Stok Kontrolü (Döngü)
+    // -----------------------------------------------------
+    urun_ekle [shape=box, label="Ürün ID ve Adet Al"];
+    stok_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 1:\nYeterli Stok Var mı?"];
+    sepet_ekle [shape=box, label="Sepete Ekle"];
+    stok_yok [shape=box, fillcolor="#FFA07A", label="Stok Yok (Bilgi Ver)"];
+    alisverise_devam [shape=diamond, label="Alışverişe Devam?"];
+
+    giris_basarili -> urun_ekle;
+    giris_misafir -> urun_ekle;
+    
+    urun_ekle -> stok_kontrol;
+    stok_kontrol -> sepet_ekle [label="EVET"];
+    stok_kontrol -> stok_yok [label="HAYIR"];
+
+    sepet_ekle -> alisverise_devam;
+    stok_yok -> alisverise_devam;
+
+    alisverise_devam -> urun_ekle [label="EVET"];
+    alisverise_devam -> sepet_ozet [label="HAYIR"];
+
+    // -----------------------------------------------------
+    // C. İndirim Uygulama
+    // -----------------------------------------------------
+    sepet_ozet [shape=box, label="Sepet Tutarını Hesapla"];
+    indirim_giris [shape=diamond, label="İndirim Kodu Girildi mi?"];
+    kod_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 2:\nKod Geçerli mi?"];
+    indirim_uygula [shape=box, label="İndirim Uygula, Yeni Tutar Hesapla"];
+    kod_gecersiz [shape=box, fillcolor="#FFA07A", label="Kod Geçersiz (Bilgi Ver)"];
+
+    sepet_ozet -> indirim_giris;
+    indirim_giris -> kod_kontrol [label="EVET"];
+    indirim_giris -> adres_al [label="HAYIR"];
+
+    kod_kontrol -> indirim_uygula [label="EVET"];
+    kod_kontrol -> kod_gecersiz [label="HAYIR"];
+
+    indirim_uygula -> adres_al;
+    kod_gecersiz -> adres_al;
+
+    // -----------------------------------------------------
+    // D. Adres ve Kargo Hesaplama
+    // -----------------------------------------------------
+    adres_al [shape=box, label="Gönderim Adresi Al/Seç"];
+    kargo_hesapla [shape=box, label="KONTROL 3:\nKargo Ücreti ve Nihai Tutar Hesapla"];
+
+    adres_al -> kargo_hesapla;
+    kargo_hesapla -> odeme_yontemi_sec;
+
+    // -----------------------------------------------------
+    // E. Ödeme Aşaması
+    // -----------------------------------------------------
+    odeme_yontemi_sec [shape=diamond, label="Ödeme Yöntemi Seçildi mi?"];
+    kart_bilgi [shape=box, label="Kart Bilgileri Al"];
+    pos_islem [shape=box, fillcolor="#B0E0E6", label="KONTROL 4:\nSanal POS İşlemi Başlat"];
+    kapida_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 5:\nKapıda Ödeme Mevcut mu?"];
+    havale [shape=box, label="Durum: Ödeme Bekliyor"];
+    kapida_odeme [shape=box, label="Durum: Kapıda Ödeme"];
+    
+    odeme_yontemi_sec -> kart_bilgi [label="Kart"];
+    odeme_yontemi_sec -> havale [label="Havale/EFT"];
+    odeme_yontemi_sec -> kapida_kontrol [label="Kapıda Ödeme"];
+    odeme_yontemi_sec -> odeme_yontemi_sec [label="Hata"];
+    
+    kart_bilgi -> pos_islem;
+    pos_islem -> siparis_kayit [label="Başarılı"];
+    pos_islem -> odeme_hata [label="Başarısız"];
+
+    kapida_kontrol -> kapida_odeme [label="EVET"];
+    kapida_kontrol -> odeme_yontemi_sec [label="HAYIR"];
+
+    // -----------------------------------------------------
+    // F. Sipariş Kayıt ve Sonlandırma
+    // -----------------------------------------------------
+    siparis_kayit [shape=box, label="KONTROL 6:\nStokları Düş/Rezerve Et"];
+    db_kayit [shape=box, label="Siparişi DB'ye Kaydet"];
+    musteri_bilgi [shape=box, fillcolor="#B0E0E6", label="KONTROL 7:\nMüşteriye E-posta/SMS Gönder"];
+    odeme_hata [shape=box, fillcolor="#FFA07A", label="Ödeme Hata (Bilgi Ver)"];
+    
+    havale -> siparis_kayit;
+    kapida_odeme -> siparis_kayit;
+    
+    siparis_kayit -> db_kayit;
+    db_kayit -> musteri_bilgi;
+
+    musteri_bilgi -> end;
+    odeme_hata -> end;
+
+    end [shape=ellipse, label="BİTİR"];
+}
