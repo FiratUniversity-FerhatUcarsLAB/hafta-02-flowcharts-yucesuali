@@ -1,0 +1,95 @@
+digraph UniversityCourseRegistration {
+    // Grafik Ayarları
+    rankdir=TB;
+    node [shape=box, style=filled, fillcolor="#F0F8FF"];
+
+    // Başlangıç ve Bitiş Düğümleri
+    start [shape=ellipse, label="BAŞLA: DERS KAYIT SİSTEMİ"];
+    end [shape=ellipse, label="BİTİR"];
+    
+    // İşlem Düğümleri
+    ogrenci_girisi [shape=box, label="Öğrenci No ve Şifre Al"];
+    harc_odeme [shape=box, fillcolor="#FFA07A", label="HATA: Harç Borcu Var\nGIT: SİSTEM_KAPAT"];
+    giris_hata [shape=box, fillcolor="#FFA07A", label="HATA: Hatalı Giriş"];
+    ders_listele [shape=box, label="Dersleri Listele (Zorunlu/Seçmeli)"];
+    ders_al [shape=box, label="Ders Kodu ve Şube Al"];
+    ders_ekle [shape=box, label="Ders Sepete Ekle\nKredi Güncelle"];
+    min_kredi_hata [shape=box, fillcolor="#FFA07A", label="HATA: Minimum Kredi Altında\nGIT: DERS_SECİMİ_VE_KONTROLLER"];
+    onay_sor [shape=diamond, label="Kullanıcı Kaydı Onaylıyor mu?"];
+    red_donus [shape=box, label="Reddedildi. GIT: DERS_SECİMİ_VE_KONTROLLER"];
+    kayit_gecici [shape=box, label="Kaydı Geçici Kaydet\n(Durum: BEKLEMEDE)"];
+    danisman_onay_basarili [shape=box, label="Kaydı Kesinleştir\nPDF Formu Oluştur"];
+    danisman_red [shape=box, fillcolor="#FFA07A", label="HATA: Danışman Reddetti"];
+    
+    // -----------------------------------------------------
+    // Kontrol/Karar Düğümleri (Diamond - KONTROL NOKTASI)
+    // -----------------------------------------------------
+    kimlik_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL A:\nKullanıcı Bilgileri Doğru mu?"];
+    harc_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL B:\nHarç Borcu Var mı?"];
+    devam_et [shape=diamond, label="Başka Ders Seçimi?"];
+
+    // Kontrol Noktaları 1-5
+    onkosul_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 1:\nÖnkoşul Sağlanıyor mu?"];
+    kontenjan_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 2:\nKontenjan Dolu mu?"];
+    maks_kredi_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 3:\nMaksimum Kredi Aşılıyor mu?"];
+    cakisma_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 4:\nZaman Çakışması Var mı?"];
+    min_kredi_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 5:\nMinimum Kredi Dolduruldu mu?"];
+
+    // Kontrol Noktası 6
+    danisman_kontrol [shape=diamond, fillcolor="#B0E0E6", label="KONTROL 6:\nDanışman Onayladı mı?"];
+
+
+    // -----------------------------------------------------
+    // AKIŞ VE BAĞLANTILAR
+    // -----------------------------------------------------
+
+    // I. Giriş Akışı
+    start -> ogrenci_girisi;
+    ogrenci_girisi -> kimlik_kontrol;
+    
+    kimlik_kontrol -> harc_kontrol [label="EVET"];
+    kimlik_kontrol -> giris_hata [label="HAYIR"];
+    giris_hata -> ogrenci_girisi;
+
+    harc_kontrol -> ders_listele [label="HAYIR"];
+    harc_kontrol -> harc_odeme [label="EVET"];
+    harc_odeme -> end;
+
+    // II. Ders Seçimi ve İç İçe Kontroller
+    ders_listele -> ders_al;
+    
+    ders_al -> onkosul_kontrol;
+
+    onkosul_kontrol -> kontenjan_kontrol [label="EVET"];
+    onkosul_kontrol -> devam_et [label="HAYIR (Hata)"];
+
+    kontenjan_kontrol -> maks_kredi_kontrol [label="HAYIR"]; // Kontenjan Dolu Değil
+    kontenjan_kontrol -> devam_et [label="EVET (Hata)"]; // Kontenjan Dolu
+
+    maks_kredi_kontrol -> cakisma_kontrol [label="HAYIR"]; // Maks Kredi Aşılmıyor
+    maks_kredi_kontrol -> devam_et [label="EVET (Hata)"]; // Maks Kredi Aşılıyor
+
+    cakisma_kontrol -> ders_ekle [label="HAYIR"]; // Çakışma Yok
+    cakisma_kontrol -> devam_et [label="EVET (Hata)"]; // Çakışma Var
+    
+    ders_ekle -> devam_et;
+    devam_et -> ders_al [label="E"];
+    devam_et -> min_kredi_kontrol [label="H"];
+
+    // III. Kayıt Kesinleştirme ve Onay Akışı
+    min_kredi_kontrol -> onay_sor [label="EVET"];
+    min_kredi_kontrol -> min_kredi_hata [label="HAYIR"];
+    min_kredi_hata -> ders_al;
+
+    onay_sor -> kayit_gecici [label="EVET"];
+    onay_sor -> red_donus [label="HAYIR"];
+    red_donus -> ders_al;
+
+    kayit_gecici -> danisman_kontrol;
+
+    danisman_kontrol -> danisman_onay_basarili [label="ONAYLANDI"];
+    danisman_kontrol -> danisman_red [label="REDDEDİLDİ"];
+
+    danisman_onay_basarili -> end;
+    danisman_red -> ders_al;
+}
